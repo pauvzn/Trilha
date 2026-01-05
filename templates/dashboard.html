@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trilha - Mi Progreso</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Estilos Base y Layout */
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { display: flex; justify-content: center; padding: 20px; }
+        
+        /* HEADER RPG: Sistema de XP y Niveles */
+        .xp-header {
+            background: #263238; border-radius: 15px; padding: 20px; margin-bottom: 25px; color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); text-align: left; position: relative;
+            overflow: hidden;
+            
+        }
+        /* El Oráculo (Mensajes Diarios) */
+        .oraculo-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            font-style: italic;
+            font-size: 0.85rem;
+            border-left: 3px solid #8bc34a;
+            color: #cfd8dc;
+        }
+
+        .xp-label { font-size: 0.75rem; color: #8bc34a; text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold; }
+        .nivel-nombre { font-size: 1.4rem; margin: 8px 0; display: block; color: #fff; }
+        
+        .progress-container-main {
+            width: 100%;
+            height: 12px;
+            background: #455a64;
+            border-radius: 10px;
+            overflow: hidden;   /* 🔥 ESTO ES CLAVE */
+        }
+
+        .progress-bar-main {
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            height: 100%;
+            width: {{ progreso_xp }}%;
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+
+        /* Formulario de Nueva Misión */
+        .form-mision {
+            background: white; padding: 18px; border-radius: 15px; margin-bottom: 30px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e0e0e0;
+        }
+        input[type="text"], input[type="number"], select {
+            border: 1px solid #ddd; border-radius: 8px; padding: 10px; outline: none;
+        }
+
+        /* Tarjetas de Metas (Misiones) */
+        .meta-card {
+            background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 18px; margin-bottom: 15px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; position: relative;
+        }
+        .meta-card:hover { 
+            transform: translateY(-4px); border-color: #03a9f4; 
+            box-shadow: 0 10px 20px rgba(3, 169, 244, 0.12); 
+        }
+        
+        .badge { font-size: 0.65rem; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; font-weight: bold; color: white; }
+        .racha-fire { 
+            color: #ff9800; font-weight: bold; margin-left: 8px; 
+            animation: pulse-fire 1.5s infinite; display: inline-block; 
+        }
+        @keyframes pulse-fire { 0% { transform: scale(1); } 50% { transform: scale(1.1); text-shadow: 0 0 5px orange; } 100% { transform: scale(1); } }
+        .completada-texto { text-decoration: line-through; color: #bbb; }
+
+        /* Botón Interactivos */
+        .btn-plus { 
+            background: #03a9f4; color: white; padding: 10px 16px; border-radius: 10px; 
+            text-decoration: none; font-weight: bold; font-size: 0.85rem; border: none;
+            box-shadow: 0 4px 0 #0288d1; transition: all 0.1s ease; display: inline-block;
+        }
+        .btn-plus:active { transform: translateY(3px); box-shadow: 0 0 0 #0288d1; }
+        
+        .btn-primary { background: #263238; color: white; border-radius: 8px; cursor: pointer; border: none; font-weight: bold; padding: 10px; }
+
+        /* Paneles de Detalles */
+        .detalles-panel { display: none; padding: 15px 0 5px 0; margin-top: 15px; border-top: 1px dashed #eee; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Estadísticas e Info Anual */
+        .anual-stats { background: #fffde7; border-radius: 10px; padding: 15px; margin-top: 10px; border: 1px solid #fff59d; }
+        .quarter-box { display: flex; justify-content: space-between; margin-top: 10px; }
+        .q-dot { font-size: 0.7rem; padding: 4px 10px; border-radius: 8px; background: #e0e0e0; color: #757575; font-weight: bold; }
+        .q-active { background: #ff9800; color: white; box-shadow: 0 2px 6px rgba(255,152,0,0.3); }
+
+        /* Barras de progreso mini */
+        .mini-progress-bg { 
+            background: #f0f0f0; 
+            width: 100%; 
+            height: 6px; 
+            border-radius: 4px; 
+            margin-top: 15px; 
+            overflow: hidden;   /* 🔥 CLAVE */
+        }
+
+        .mini-progress-fill { 
+            height: 100%; 
+            border-radius: 4px; 
+            transition: width 0.6s ease; 
+            max-width: 100%;     /* 🔥 SEGURIDAD */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" style="width: 550px; max-width: 95vw; background: transparent; box-shadow: none; padding: 0;">
+            
+            <div class="xp-header">
+                
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:10px;">
+                    <div class="avatar-box {{ clase }}">
+                        <img src="{{ avatar }}" alt="Avatar">
+                    </div>
+                    <div>
+                        <span class="xp-label">{{ clase | capitalize }}</span>
+                        <strong class="nivel-nombre">{{ nombre }}</strong>
+                    </div>
+                </div>
+
+                <span class="xp-label">Trilha de {{ nombre }}</span>
+                <strong class="nivel-nombre">
+                    {% if nivel < 3 %} Caminante Novato 🥾
+                    {% elif nivel < 6 %} Explorador de Rutas 🧭
+                    {% elif nivel < 10 %} Guía de la Trilha 🗺️
+                    {% else %} Maestro del Destino 👑 {% endif %}
+                </strong>
+
+                <div class="progress-container-main">
+                    <div class="progress-bar-main"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #cfd8dc;">
+                    <span>XP: <strong>{{ xp_en_nivel }} / {{ xp_necesario }}</strong></span>
+                    <span>Nivel: <strong>{{ nivel }}</strong></span>
+                    <span>Siguiente nivel</span>
+                </div>
+
+
+                <div class="oraculo-box" id="mensaje-diario">
+                    Cargando sabiduría...
+                </div>
+            </div>
+
+            <!-- ⚔️ HABILIDADES DE CLASE -->
+            <div class="habilidades-box">
+                <h3>Habilidades de {{ clase | capitalize }}</h3>
+
+                <div class="habilidades-grid">
+                    {% for h in habilidades %}
+                    <div class="habilidad-card">
+                        <div class="habilidad-icono">{{ h.icono }}</div>
+                        <div>
+                            <strong>{{ h.nombre }}</strong>
+                            <p>{{ h.desc }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            <form action="/nueva_meta" method="POST" class="form-mision">
+                <input type="text" name="meta" placeholder="¿Cuál es tu próximo gran objetivo?" required style="width: 100%; box-sizing: border-box; margin-bottom: 12px;">
+                <div style="display: flex; gap: 10px;">
+                    <select name="tipo" style="flex: 2;">
+                        <option value="diaria">Diaria</option>
+                        <option value="semanal">Semanales</option>
+                        <option value="mensual">Mensuales</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                    <input type="number" name="objetivo" value="1" min="1" style="flex: 1;" title="Repeticiones">
+                    <button type="submit" class="btn-primary" style="flex: 1.5;">+ Misión</button>
+                </div>
+            </form>
+
+            <div class="metas-lista">
+                <h3 style="color: #455a64; margin-left: 10px; font-size: 1.1rem;">Misiones en Curso:</h3>
+                {% for m in metas %}
+                    <div class="meta-card" onclick="toggleDetalles('detalles-{{ m.id }}')">
+                        <div class="meta-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="badge" style="background: {{ '#4caf50' if m.tipo == 'diaria' else '#2196f3' if m.tipo == 'semanal' else '#9c27b0' if m.tipo == 'mensual' else '#ff9800' }};">
+                                    {{ m.tipo }}
+                                </span>
+                                <h4 style="margin: 10px 0 0 0; font-size: 1.1rem;" class="{{ 'completada-texto' if m.completada else '' }}">
+                                    {{ m.contenido }} 
+                                    {% if m.tipo != 'anual' and m.racha > 0 %}<span class="racha-fire">🔥 {{ m.racha }}</span>{% endif %}
+                                </h4>
+                            </div>
+                            
+                            <div onclick="event.stopPropagation();">
+                                {% if not m.completada %}
+                                    <a href="/subir_progreso/{{ m.id }}" class="btn-plus">+1 ({{ m.progreso_conteo }}/{{ m.objetivo_conteo }})</a>
+                                {% else %}
+                                    <span style="font-size: 1.5rem;" title="¡Completada!">⭐</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div id="detalles-{{ m.id }}" class="detalles-panel">
+                            {% if m.tipo == 'anual' %}
+                                <div class="anual-stats">
+                                    {% set faltan = (365 - ahora.timetuple().tm_yday) %}
+                                    {% set porc_anio = (ahora.timetuple().tm_yday / 365 * 100)|int %}
+                                    {% set porc_meta = (m.progreso_conteo / m.objetivo_conteo * 100)|int if m.objetivo_conteo > 0 else 0 %}
+                                    
+                                    <div style="font-size: 0.85rem; margin-bottom: 8px;">⏳ Quedan <strong>{{ faltan }} días</strong>.</div>
+                                    <div style="font-size: 0.8rem;">
+                                        🗓️ Año: {{ porc_anio }}% | Meta: {{ porc_meta }}%
+                                        <span class="{{ 'pace-good' if porc_meta >= porc_anio else 'pace-bad' }}">
+                                            {{ '(¡Vas volando! 🚀)' if porc_meta >= porc_anio else '(¡A dar el extra! ⚠️)' }}
+                                        </span>
+                                    </div>
+
+                                    <div class="quarter-box">
+                                        <span class="q-dot {{ 'q-active' if ahora.month >= 1 }}">Q1</span>
+                                        <span class="q-dot {{ 'q-active' if ahora.month >= 4 }}">Q2</span>
+                                        <span class="q-dot {{ 'q-active' if ahora.month >= 7 }}">Q3</span>
+                                        <span class="q-dot {{ 'q-active' if ahora.month >= 10 }}">Q4</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8rem; color: #666; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                                    <div><strong>Racha actual:</strong> {{ m.racha }}</div>
+                                    <div><strong>Total logrados:</strong> {{ m.total_cumplido }}</div>
+                                    <div style="grid-column: span 2; font-size: 0.7rem;">Último avance: {{ m.ultima_actualizacion.strftime('%d/%m %H:%M') }}</div>
+                                </div>
+                            {% endif %}
+                            
+                            <div style="margin-top: 15px; text-align: right;">
+                                <a href="/borrar/{{ m.id }}" onclick="return confirm('¿Eliminar permanentemente?')" style="color: #ff5252; font-size: 0.75rem; text-decoration: none; font-weight: bold;">🗑️ ELIMINAR MISIÓN</a>
+                            </div>
+                        </div>
+
+                        {% set p_meta = (m.progreso_conteo / m.objetivo_conteo * 100)|int if m.objetivo_conteo > 0 else 0 %}
+
+                        <div class="mini-progress-bg">
+                            <div class="mini-progress-fill"
+                                style="width: {{ p_meta if p_meta <= 100 else 100 }}%;
+                                        background: {{ '#4caf50' if m.completada else '#03a9f4' }};">
+                            </div>
+                        </div>
+
+
+                    </div>
+                {% else %}
+                    <div style="text-align: center; color: #999; margin: 40px 0; background: white; padding: 20px; border-radius: 15px;">
+                        <p>No hay misiones activas.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="/logout" style="color: #78909c; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← CERRAR SESIÓN / ABANDONAR TRILHA</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        function toggleDetalles(id) {
+            const panel = document.getElementById(id);
+            const isVisible = panel.style.display === "block";
+            document.querySelectorAll('.detalles-panel').forEach(p => p.style.display = 'none');
+            panel.style.display = isVisible ? "none" : "block";
+        }
+
+        // LÓGICA DEL ORÁCULO (Mensajes Diarios)
+        const mensajes = [
+            "Un Guerrero no deja para mañana lo que puede completar hoy. 🔥",
+            "La Trilha es larga, pero cada paso cuenta, {{ nombre }}. 🥾",
+            "¡El éxito es la suma de pequeños esfuerzos diarios! 🚀",
+            "¿Ese objetivo parece difícil? Divídelo en misiones pequeñas. ⚔️",
+            "Hoy es un gran día para subir de rango. ¡Adelante! 👑",
+            "Tu voluntad es tu mejor arma. ¡Úsala bien! 🛡️",
+            "El descanso también es parte de la estrategia 🛌",
+            "LA RACHAAAAAAAA. Que nada apague ese fuego. 🔥",
+            "Ponte las pilas 🔋",
+            "La disciplina es el escudo que te protege del fracaso. 🛡️",
+            "Tu futuro yo te agradecerá el esfuerzo de hoy. ¡Sigue adelante! ⚡",
+            "Incluso la montaña más alta se conquista paso a paso. No te detengas. 🏔️",
+            "¿Cansado? No. Estás subiendo de nivel. Siente el poder del progreso. 💪",
+            "El éxito no es suerte, es el botín de tus batallas diarias. 💰",
+            "Tu voluntad es más fuerte que cualquier excusa. ¡Demuéstralo! 🔥",
+            "Si el camino se pone difícil, es porque vas por la ruta correcta. 🧭",
+            "No busques el destino, enamórate de la Trilha. 🗺️",
+            "Una misión completada hoy es una preocupación menos para mañana. ✅",
+            "Afila tu mente, organiza tus tareas y conquista el día. ⚔️",
+            "El mapa está en tus manos, pero tú eres quien debe caminar. 🥾",
+            "La constancia vence lo que la fuerza no puede. 🌊",
+            "Un pequeño avance es mejor que una gran intención. 💎",
+            "Domina tu día y terminarás dominando tu destino. 👑","Que tus acciones hablen más fuerte que tus deseos. ✨"
+        ];
+
+        document.getElementById('mensaje-diario').innerText = mensajes[Math.floor(Math.random() * mensajes.length)];
+
+        {% if progreso_xp == 100 %}
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4caf50', '#8bc34a', '#03a9f4'] });
+        {% endif %}
+    </script>
+</body>
+</html>

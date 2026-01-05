@@ -1,0 +1,287 @@
+/* --- CONFIGURACIÓN DE COLORES Y VARIABLES --- */
+:root {
+    --primary-neon: #00f2fe;    /* Azul Cyber */
+    --secondary-neon: #4facfe;  /* Azul Profundo */
+    --success-neon: #00e676;    /* Verde Épico */
+    --danger-neon: #ff5252;     /* Rojo Alerta */
+    --bg-dark: #0f172a;         /* Fondo Espacial */
+    --glass-white: rgba(255, 255, 255, 0.9);
+    --glass-dark: rgba(15, 23, 42, 0.8);
+    --text-main: #1e293b;
+}
+
+/* --- ESTILO BASE DEL CUERPO --- */
+body {
+    background: radial-gradient(circle at top, #1e293b 0%, var(--bg-dark) 100%);
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: white;
+    overflow-x: hidden;
+}
+
+
+
+/* --- CONTENEDOR PRINCIPAL (GLASSMORPISM) --- */
+.container {
+    text-align: center;
+    background: var(--glass-white);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 2.5rem;
+    border-radius: 28px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    width: 100%;
+    max-width: 450px;
+    color: var(--text-main);
+    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+h1 {
+    background: linear-gradient(135deg, #055022 0%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    font-size: 2.2rem;
+}
+
+/* --- TARJETA DE MENSAJES / ORÁCULO --- */
+.card {
+    background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+    border-left: 6px solid var(--secondary-neon);
+    padding: 15px;
+    margin-top: 25px;
+    border-radius: 12px;
+    font-weight: 500;
+    color: #0277bd;
+    box-shadow: 0 4px 15px rgba(3, 169, 244, 0.1);
+}
+
+/* --- FORMULARIOS E INPUTS --- */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #475569;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+input[type="text"], 
+input[type="password"], 
+input[type="number"], 
+select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    border-color: var(--secondary-neon);
+    outline: none;
+    background: white;
+    box-shadow: 0 0 15px rgba(79, 172, 254, 0.2);
+    transform: scale(1.01);
+}
+
+/* --- BOTONES CON ENERGÍA --- */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-neon) 0%, var(--secondary-neon) 100%);
+    color: white;
+    border: none;
+    padding: 16px 20px;
+    border-radius: 16px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 15px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(79, 172, 254, 0.6);
+    filter: brightness(1.1);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* --- SISTEMA DE XP (BARRAS) --- */
+.xp-bar-container {
+    background: rgba(0,0,0,0.1);
+    height: 12px;
+    border-radius: 50px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.xp-bar-fill {
+    background: linear-gradient(90deg, var(--success-neon), #b2ff59);
+    height: 100%;
+    box-shadow: 0 0 10px var(--success-neon);
+    transition: width 1s ease-in-out;
+}
+
+/* --- ELEMENTOS DE META (MISIONES) --- */
+.meta-item {
+    background: white;
+    padding: 15px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.meta-item:hover {
+    border-color: var(--primary-neon);
+    transform: translateX(5px);
+}
+
+/* --- ENLACES Y TEXTOS --- */
+a {
+    color: var(--secondary-neon);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--primary-neon);
+}
+
+.racha-fire {
+    color: #ff9800;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 152, 0, 0.4);
+}
+
+.avatar-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid var(--primary-neon);
+    object-fit: cover;
+    background: var(--bg-dark);
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
+}
+
+/* Badge de Nivel sobre el avatar */
+.level-badge {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: var(--secondary-neon);
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    border: 3px solid var(--bg-dark);
+    font-size: 0.8rem;
+}
+
+.avatar-box {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #ffffff, #cfd8dc);
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.avatar-box img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+/* 🗡️ GUERRERO */
+.avatar-box.guerrero {
+    box-shadow: 0 0 15px #ff5252;
+    border: 3px solid #c62828;
+}
+
+/* 🧭 EXPLORADOR */
+.avatar-box.explorador {
+    box-shadow: 0 0 15px #4caf50;
+    border: 3px solid #2e7d32;
+}
+
+/* 🪄 MAGO */
+.avatar-box.mago {
+    box-shadow: 0 0 15px #7e57c2;
+    border: 3px solid #4527a0;
+}
+
+.habilidades-box {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.habilidades-box h3 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    color: #455a64;
+}
+
+.habilidades-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.habilidad-card {
+    display: flex;
+    gap: 10px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 0.8rem;
+    border-left: 4px solid #03a9f4;
+}
+
+.habilidad-icono {
+    font-size: 1.6rem;
+}

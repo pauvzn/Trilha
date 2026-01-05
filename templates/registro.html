@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Trilha - Iniciar Sesión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <main class="card">
+            <h2>Ingresar a Trilha</h2>
+            <form method="POST">
+                <div class="input-group">
+                    <label>Usuario</label>
+                    <input type="text" name="usuario" required>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="input-group">
+                    <label>Clase</label>
+                    <select name="clase" required>
+                        <option value="guerrero">🗡️ Guerrero</option>
+                        <option value="explorador">🧭 Explorador</option>
+                        <option value="mago">🪄 Mago</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Entrar</button>
+            </form>
+            <p>Estoy listo para la aventura! <a href="/login">Regístrate</a></p>
+        </main>
+    </div>
+</body>
+</html>

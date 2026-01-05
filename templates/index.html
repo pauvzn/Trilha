@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Trilha - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Trilha </h1>
+            <p>Tu camino, paso a paso 👣 </p>
+            <p>Inicia sesión para ver tus metas</p>
+            <form action="/login" method="POST">
+                <input type="text" name="usuario" placeholder="Usuario" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <button type="submit" class="btn-primary">Entrar</button>
+            </form>
+            <p>¿Eres nuevo por aquí? <a href="/registro">Regístrate aquí</a></p>
+        </div>
+    </div>
+</body>
+</html>
